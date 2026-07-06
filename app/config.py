@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # Server
     host: str = Field(
         default="0.0.0.0"
-    )  # nosec B104 - container default, override via HOST env
+    )  # nosec B104
     port: int = Field(default=8000)
 
     # Database
