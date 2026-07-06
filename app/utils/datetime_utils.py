@@ -1,6 +1,6 @@
 """Datetime utilities for the application."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 
 def utc_now() -> datetime:
@@ -9,7 +9,7 @@ def utc_now() -> datetime:
     Returns:
         datetime: Current UTC datetime
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def add_hours(dt: datetime, hours: int) -> datetime:

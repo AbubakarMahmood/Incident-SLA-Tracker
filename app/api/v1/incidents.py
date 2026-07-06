@@ -23,7 +23,9 @@ from app.services.incident_service import IncidentService
 router = APIRouter()
 
 
-@router.post("/incidents", response_model=IncidentResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/incidents", response_model=IncidentResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_incident(
     incident_data: IncidentCreate,
     current_user: Annotated[User, Depends(get_current_active_user)],

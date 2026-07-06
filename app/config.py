@@ -1,7 +1,5 @@
 """Application configuration using Pydantic Settings."""
 
-from typing import List
-
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -84,7 +82,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins")
     @classmethod
-    def parse_cors_origins(cls, v: str) -> List[str]:
+    def parse_cors_origins(cls, v: str) -> list[str]:
         """Parse comma-separated CORS origins."""
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
@@ -92,7 +90,7 @@ class Settings(BaseSettings):
 
     @field_validator("allowed_extensions")
     @classmethod
-    def parse_allowed_extensions(cls, v: str) -> List[str]:
+    def parse_allowed_extensions(cls, v: str) -> list[str]:
         """Parse comma-separated file extensions."""
         if isinstance(v, str):
             return [ext.strip().lower() for ext in v.split(",") if ext.strip()]

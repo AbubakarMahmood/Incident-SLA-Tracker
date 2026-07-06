@@ -66,9 +66,7 @@ class NotificationService:
             return False
 
     @staticmethod
-    async def send_email_async(
-        to_email: str, subject: str, html_content: str
-    ) -> bool:
+    async def send_email_async(to_email: str, subject: str, html_content: str) -> bool:
         """Send an email asynchronously.
 
         Args:
@@ -164,7 +162,7 @@ class NotificationService:
 
     @staticmethod
     def get_approaching_deadline_email(
-        incident_data: dict[str, Any]
+        incident_data: dict[str, Any],
     ) -> tuple[str, str]:
         """Generate approaching deadline email content.
 

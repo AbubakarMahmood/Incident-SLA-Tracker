@@ -1,12 +1,10 @@
 """Background tasks for sending notifications."""
 
-from typing import Any
-
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.models import Incident, SLA, User
+from app.models import SLA, Incident
 from app.services.notification_service import NotificationService
 from app.tasks.celery_app import celery_app
 
@@ -29,7 +27,9 @@ def send_incident_created_email(incident_id: str, assignee_email: str) -> bool:
     try:
         with Session(engine) as session:
             # Fetch incident with SLA
-            stmt = select(Incident, SLA).outerjoin(SLA).where(Incident.id == incident_id)
+            stmt = (
+                select(Incident, SLA).outerjoin(SLA).where(Incident.id == incident_id)
+            )
             result = session.execute(stmt).first()
 
             if not result:

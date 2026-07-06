@@ -1,10 +1,16 @@
 """Attachment model for incident file uploads."""
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import BigInteger, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.models.incident import Incident
+    from app.models.user import User
 
 
 class Attachment(Base, UUIDMixin, TimestampMixin):
@@ -26,8 +32,12 @@ class Attachment(Base, UUIDMixin, TimestampMixin):
     )
 
     # Relationships
-    incident: Mapped["Incident"] = relationship("Incident", back_populates="attachments")
-    uploaded_by_user: Mapped["User"] = relationship("User", back_populates="attachments")
+    incident: Mapped["Incident"] = relationship(
+        "Incident", back_populates="attachments"
+    )
+    uploaded_by_user: Mapped["User"] = relationship(
+        "User", back_populates="attachments"
+    )
 
     def __repr__(self) -> str:
         return f"<Attachment(id={self.id}, filename={self.filename}, incident_id={self.incident_id})>"

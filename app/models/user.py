@@ -1,9 +1,16 @@
 """User model for authentication and assignment."""
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.models.attachment import Attachment
+    from app.models.comment import Comment
+    from app.models.incident import Incident
 
 
 class User(Base, UUIDMixin, TimestampMixin, SoftDeleteMixin):

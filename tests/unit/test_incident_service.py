@@ -84,9 +84,7 @@ async def test_update_incident_status(db_session, test_user):
     incident = await service.create_incident(incident_data, test_user.id)
 
     # Update status
-    updated_incident = await service.update_status(
-        incident.id, IncidentStatus.RESOLVED
-    )
+    updated_incident = await service.update_status(incident.id, IncidentStatus.RESOLVED)
 
     assert updated_incident is not None
     assert updated_incident.status == IncidentStatus.RESOLVED

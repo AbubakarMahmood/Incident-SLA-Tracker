@@ -5,7 +5,7 @@ from datetime import timedelta
 from sqlalchemy import and_, or_, select
 
 from app.config import settings
-from app.models import Incident, SLA, SLAStatus, User
+from app.models import SLA, Incident, SLAStatus, User
 from app.tasks.celery_app import celery_app
 from app.tasks.notifications import send_sla_breach_notification
 from app.utils import utc_now
@@ -144,8 +144,7 @@ def check_approaching_deadlines() -> dict:
                                     [IncidentPriority.CRITICAL, IncidentPriority.HIGH]
                                 ),
                                 SLA.resolution_deadline > now,
-                                SLA.resolution_deadline
-                                <= now + timedelta(hours=1),
+                                SLA.resolution_deadline <= now + timedelta(hours=1),
                             ),
                             # Medium/Low priority - 4 hour warning
                             and_(
@@ -153,8 +152,7 @@ def check_approaching_deadlines() -> dict:
                                     [IncidentPriority.MEDIUM, IncidentPriority.LOW]
                                 ),
                                 SLA.resolution_deadline > now,
-                                SLA.resolution_deadline
-                                <= now + timedelta(hours=4),
+                                SLA.resolution_deadline <= now + timedelta(hours=4),
                             ),
                         ),
                     )
@@ -174,7 +172,9 @@ def check_approaching_deadlines() -> dict:
                     send_approaching_deadline_notification.delay(
                         incident_id=str(incident.id),
                         assignee_email=assignee.email,
-                        time_remaining_minutes=int(time_remaining.total_seconds() // 60),
+                        time_remaining_minutes=int(
+                            time_remaining.total_seconds() // 60
+                        ),
                     )
                     warnings_sent += 1
 

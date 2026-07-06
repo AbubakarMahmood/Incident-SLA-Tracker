@@ -58,8 +58,8 @@ class IncidentResponse(IncidentInDB):
 class IncidentWithDetails(IncidentInDB):
     """Schema for incident with related details."""
 
-    reporter: "UserResponse" | None = None
-    assignee: "UserResponse" | None = None
+    reporter: "UserResponse | None" = None
+    assignee: "UserResponse | None" = None
     sla: "SLAResponse | None" = None
     comments_count: int = 0
     attachments_count: int = 0

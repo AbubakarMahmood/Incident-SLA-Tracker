@@ -2,12 +2,17 @@
 
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum as SQLEnum, ForeignKey, Interval
+from sqlalchemy import DateTime, ForeignKey, Interval
+from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.models.incident import Incident
 
 
 class SLAStatus(str, Enum):
@@ -64,7 +69,9 @@ class SLA(Base, UUIDMixin, TimestampMixin):
     incident: Mapped["Incident"] = relationship("Incident", back_populates="sla")
 
     def __repr__(self) -> str:
-        return f"<SLA(id={self.id}, incident_id={self.incident_id}, status={self.status})>"
+        return (
+            f"<SLA(id={self.id}, incident_id={self.incident_id}, status={self.status})>"
+        )
 
     @property
     def is_response_breached(self) -> bool:

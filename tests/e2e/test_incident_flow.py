@@ -1,7 +1,5 @@
 """E2E tests for incident flow using Playwright."""
 
-import asyncio
-
 import pytest
 
 

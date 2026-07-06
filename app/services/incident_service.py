@@ -1,7 +1,6 @@
 """Incident service for business logic."""
 
-from datetime import datetime
-from typing import Sequence
+from collections.abc import Sequence
 from uuid import UUID
 
 from sqlalchemy import func, or_, select
@@ -9,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.config import settings
-from app.models import Incident, IncidentPriority, IncidentStatus, SLA
+from app.models import SLA, Incident, IncidentPriority, IncidentStatus
 from app.schemas import IncidentCreate, IncidentUpdate
 from app.utils import add_hours, utc_now
 
@@ -272,7 +271,9 @@ class IncidentService:
             )
 
         # Total incidents
-        total = await self.db.scalar(select(func.count()).select_from(base_query.alias()))
+        total = await self.db.scalar(
+            select(func.count()).select_from(base_query.alias())
+        )
 
         # By status
         open_count = await self.db.scalar(
@@ -282,9 +283,7 @@ class IncidentService:
         )
         in_progress_count = await self.db.scalar(
             select(func.count()).select_from(
-                base_query.where(
-                    Incident.status == IncidentStatus.IN_PROGRESS
-                ).alias()
+                base_query.where(Incident.status == IncidentStatus.IN_PROGRESS).alias()
             )
         )
         resolved_count = await self.db.scalar(
