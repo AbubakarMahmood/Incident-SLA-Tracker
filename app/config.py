@@ -23,9 +23,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(default=30)
 
     # Server
-    host: str = Field(
-        default="0.0.0.0"
-    )  # nosec B104
+    host: str = Field(default="0.0.0.0")  # nosec B104
     port: int = Field(default=8000)
 
     # Database

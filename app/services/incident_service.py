@@ -59,6 +59,8 @@ class IncidentService:
         self.db.add(sla)
         await self.db.commit()
         await self.db.refresh(incident)
+        # Load the relationship eagerly; lazy loading is unavailable in async sessions
+        await self.db.refresh(incident, attribute_names=["sla"])
 
         return incident
 

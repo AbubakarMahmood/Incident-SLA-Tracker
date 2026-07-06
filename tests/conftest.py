@@ -55,6 +55,11 @@ async def db_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
         await session.rollback()
+        # Service code commits inside tests, so rollback alone cannot isolate
+        # state between tests; wipe all tables explicitly.
+        for table in reversed(Base.metadata.sorted_tables):
+            await session.execute(table.delete())
+        await session.commit()
 
 
 @pytest.fixture
