@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_active_user
 from app.database import get_db
-from app.models import IncidentPriority, IncidentStatus, User
+from app.models import Incident, IncidentPriority, IncidentStatus, User
 from app.schemas import (
     IncidentAssign,
     IncidentCreate,
@@ -23,7 +23,7 @@ from app.services.incident_service import IncidentService
 router = APIRouter()
 
 
-def _ensure_can_modify(incident, user: User) -> None:
+def _ensure_can_modify(incident: Incident, user: User) -> None:
     """Allow modification only by the reporter, current assignee, or a superuser."""
     if user.is_superuser:
         return
