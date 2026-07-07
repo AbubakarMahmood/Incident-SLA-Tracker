@@ -23,6 +23,18 @@ from app.services.incident_service import IncidentService
 router = APIRouter()
 
 
+def _ensure_can_modify(incident, user: User) -> None:
+    """Allow modification only by the reporter, current assignee, or a superuser."""
+    if user.is_superuser:
+        return
+    if incident.reporter_id == user.id or incident.assignee_id == user.id:
+        return
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Not permitted to modify this incident",
+    )
+
+
 @router.post(
     "/incidents", response_model=IncidentResponse, status_code=status.HTTP_201_CREATED
 )
@@ -147,14 +159,15 @@ async def update_incident(
         HTTPException: If incident not found
     """
     service = IncidentService(db)
-    incident = await service.update_incident(incident_id, incident_data)
-
-    if not incident:
+    existing = await service.get_incident(incident_id)
+    if not existing:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Incident not found",
         )
+    _ensure_can_modify(existing, current_user)
 
+    incident = await service.update_incident(incident_id, incident_data)
     return IncidentResponse.model_validate(incident)
 
 
@@ -180,14 +193,15 @@ async def assign_incident(
         HTTPException: If incident not found
     """
     service = IncidentService(db)
-    incident = await service.assign_incident(incident_id, assign_data.assignee_id)
-
-    if not incident:
+    existing = await service.get_incident(incident_id)
+    if not existing:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Incident not found",
         )
+    _ensure_can_modify(existing, current_user)
 
+    incident = await service.assign_incident(incident_id, assign_data.assignee_id)
     return IncidentResponse.model_validate(incident)
 
 
@@ -213,14 +227,15 @@ async def update_incident_status(
         HTTPException: If incident not found
     """
     service = IncidentService(db)
-    incident = await service.update_status(incident_id, status_data.status)
-
-    if not incident:
+    existing = await service.get_incident(incident_id)
+    if not existing:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Incident not found",
         )
+    _ensure_can_modify(existing, current_user)
 
+    incident = await service.update_status(incident_id, status_data.status)
     return IncidentResponse.model_validate(incident)
 
 
@@ -241,13 +256,15 @@ async def delete_incident(
         HTTPException: If incident not found
     """
     service = IncidentService(db)
-    deleted = await service.delete_incident(incident_id)
-
-    if not deleted:
+    existing = await service.get_incident(incident_id)
+    if not existing:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Incident not found",
         )
+    _ensure_can_modify(existing, current_user)
+
+    await service.delete_incident(incident_id)
 
 
 @router.get("/incidents/stats/summary")
